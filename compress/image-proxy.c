@@ -57,6 +57,10 @@ void* proxy_remote_image(void* ptr)
         }
         finalize_put_rimg(rimg);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+        // 计时
+>>>>>>> Stashed changes
 =======
         // 计时
 >>>>>>> Stashed changes
@@ -66,6 +70,10 @@ void* proxy_remote_image(void* ptr)
         //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
 		//else
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+        // lz4压缩
+>>>>>>> Stashed changes
 =======
         // lz4压缩
 >>>>>>> Stashed changes
