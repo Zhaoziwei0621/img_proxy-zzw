@@ -71,13 +71,15 @@ int init_sync_structures()
         return 0;
 }
 
+// fd 是通信套接字
 void* get_remote_image(void* fd)
 {
         int cli_fd = (long) fd;
-        remote_image* rimg = NULL;
+        remote_image* rimg = NULL; //保存镜像文件结构体
         char path_buf[PATHLEN];
         char namespace_buf[PATHLEN];
 
+        // 从远程socket读namespace和path，并将其保存在各自变量中
         if(read_header(cli_fd, namespace_buf, path_buf) < 0) {
                 perror("Error reading header");
                 return NULL;
@@ -85,6 +87,7 @@ void* get_remote_image(void* fd)
 
         printf("Received GET for %s:%s.\n", path_buf, namespace_buf);
 
+        // 等待镜像的到来
         rimg = wait_for_image(cli_fd, namespace_buf, path_buf);
         if (!rimg)
                 return NULL;
@@ -112,7 +115,7 @@ void finalize_put_rimg(remote_image* rimg)
 
 int init_proxy()
 {
-        get_func = get_remote_image;
+        get_func = get_remote_image; //函数指针
         put_func = proxy_remote_image;
         return init_sync_structures();
 }
@@ -227,14 +230,17 @@ void join_workers()
         }
 }
 
+// cli_fd是通信套接字
 remote_image* wait_for_image(int cli_fd, char* namespace, char* path)
 {
         remote_image *result;
 
         while (1) {
+                // 通过namespace和path查找到相应镜像文件
                 result = get_rimg_by_name(namespace, path);
                 // The file exists
                 if(result != NULL) {
+                        // 将path和namespace写入通信套接字
                         if(write_header(cli_fd, namespace, path) < 0) {
                                 printf("Error writing header for %s:%s",
                                         path, namespace);
@@ -320,7 +326,8 @@ void* accept_put_image_connections(void* port)
                 remote_image* rimg = get_rimg_by_name(namespace_buf, path_buf);
 
                 printf("Reveiced PUT request for %s:%s\n", path_buf, namespace_buf);
-
+                
+                //给rimg结构体赋空间
                 if(rimg == NULL) {
                         rimg = malloc(sizeof (remote_image));
                         if (rimg == NULL) {
@@ -374,25 +381,29 @@ void* accept_put_image_connections(void* port)
         }
 }
 
+// 实际获取镜像数据
 int recv_remote_image(int fd, char* path, struct list_head* rbuff_head)
 {
+        // 找到了rbuff_head->next所在的remote_buffer结构体的地址
         remote_buffer* curr_buf = list_entry(rbuff_head->next, remote_buffer, l);
         int n, nblocks;
 
         nblocks = 0;
         while(1) {
+                // 调用read函数实际从socket中读取数据
                 n = read(fd,
-                         curr_buf->buffer + curr_buf->nbytes,
-                         BUF_SIZE - curr_buf->nbytes);
-                if (n == 0) {
+                curr_buf->buffer + curr_buf->nbytes,
+                BUF_SIZE - curr_buf->nbytes);
+                if (n == 0) { // 如果数据读完
                         printf("Finished receiving %s (%d full blocks, %d bytes on last block)\n",
                                 path, nblocks, curr_buf->nbytes);
-						if (curr_buf->nbytes == 0) {
-							remote_buffer* prev_buf = list_entry(curr_buf->l.prev, remote_buffer, l);
-							prev_buf->is_end = 1;
-						}
-						else
-							curr_buf->is_end = 1;
+                        // 如果buffer里面已经没有数据了
+                        if (curr_buf->nbytes == 0) {
+                                remote_buffer* prev_buf = list_entry(curr_buf->l.prev, remote_buffer, l);
+                                prev_buf->is_end = 1;
+                        }
+                        else
+                                curr_buf->is_end = 1;
                         close(fd);
                         return nblocks*BUF_SIZE + curr_buf->nbytes;
                 }
@@ -405,7 +416,7 @@ int recv_remote_image(int fd, char* path, struct list_head* rbuff_head)
                                         return -1;
                                 }
                                 buf->nbytes = 0;
-								buf->is_end = 0;
+                                buf->is_end = 0;
                                 list_add_tail(&(buf->l), rbuff_head);
                                 curr_buf = buf;
                                 nblocks++;
@@ -418,11 +429,14 @@ int recv_remote_image(int fd, char* path, struct list_head* rbuff_head)
         }
 }
 
+// fd是通信套接字
 size_t send_remote_obj(int fd, char* buff, size_t size) 
 {
 	size_t n = 0;
 	size_t curr = 0;
 	while(1) {
+                //send a message on a socket
+                //ssize_t send(int sockfd, const void *buf, size_t len, int flags);
 		n = send(fd, buff + curr, size - curr, MSG_NOSIGNAL);
 		if( n < 1) {
 			return n;
@@ -436,44 +450,47 @@ size_t send_remote_obj(int fd, char* buff, size_t size)
 	}
 }
 
+// 返回发送的数据量
 int send_remote_image(int fd, char* path, struct list_head* rbuff_head)
 {
         remote_buffer* curr_buf = list_entry(rbuff_head->next, remote_buffer, l);
         int nblocks;
 
-		nblocks = 0;
+	nblocks = 0;
 		
         while(1) {
-				// msg head
-				struct msgInfo msg;
-				msg.nbytes = curr_buf->nbytes;
-				msg.cbytes = 0;
-				msg.is_compressed = false;
-				// means msg will end
-				msg.is_end = curr_buf->is_end;
+                // msg head
+                struct msgInfo msg; //？msg里记录的是数据的元数据
+                msg.nbytes = curr_buf->nbytes;
+                msg.cbytes = 0;
+                msg.is_compressed = false;
+                // means msg will end
+                msg.is_end = curr_buf->is_end;
 
-				char* buf = malloc(sizeof(msgInfo));
-				memcpy(buf, &msg, sizeof(msgInfo));
-				if (send_remote_obj(fd, buf, sizeof(msgInfo)) != sizeof(msgInfo)) {
-                    	printf("Write on %s msgInfo failed\n", path);
-						return -1;
-				}
+                char* buf = malloc(sizeof(msgInfo));
+                memcpy(buf, &msg, sizeof(msgInfo));
+                //fd是通信套接字
+                // ？先发送元数据，再发送数据
+                if (send_remote_obj(fd, buf, sizeof(msgInfo)) != sizeof(msgInfo)) {
+                        printf("Write on %s msgInfo failed\n", path);
+                        return -1;
+                }
 
-				if (send_remote_obj(fd, curr_buf->buffer, msg.nbytes) == msg.nbytes) {
-						if (msg.is_end) {
-								printf("Finished forwarding %s (%d full blocks, %d bytes on last block) total %d\n",
-										path, nblocks, curr_buf->nbytes, nblocks*BUF_SIZE + curr_buf->nbytes);
-								close(fd);
-								return nblocks*BUF_SIZE + curr_buf->nbytes;
-						}
-                        nblocks++;
-						//if (!strncmp(path, "pages-", 6))
-						//		printf("we forwarding %s (%d full blocks, %d bytes on last block) total %d\n",
-						//				path, nblocks, curr_buf->nbytes, nblocks*BUF_SIZE);
-				} else {
-                    	printf("Write on %s msgData failed\n", path);
-						return -1;
-				}
+                if (send_remote_obj(fd, curr_buf->buffer, msg.nbytes) == msg.nbytes) {
+                        if (msg.is_end) {
+                                printf("Finished forwarding %s (%d full blocks, %d bytes on last block) total %d\n",
+                                        path, nblocks, curr_buf->nbytes, nblocks*BUF_SIZE + curr_buf->nbytes);
+                                close(fd);
+                                return nblocks*BUF_SIZE + curr_buf->nbytes;
+                        }
+                nblocks++;
+                //if (!strncmp(path, "pages-", 6))
+                //		printf("we forwarding %s (%d full blocks, %d bytes on last block) total %d\n",
+                //				path, nblocks, curr_buf->nbytes, nblocks*BUF_SIZE);
+                } else {
+                        printf("Write on %s msgData failed\n", path);
+                        return -1;
+                }
                	curr_buf = list_entry(curr_buf->l.next, remote_buffer, l);
         }
 }
@@ -483,43 +500,43 @@ int send_remote_image_lz4(int fd, char* path, struct list_head* rbuff_head)
         remote_buffer* curr_buf = list_entry(rbuff_head->next, remote_buffer, l);
         int nblocks, bytes;
 
-		nblocks = 0;
-		bytes = 0;
+        nblocks = 0;
+        bytes = 0;
 		
         while(1) {
-				// msg head
-				struct msgInfo msg;
-				msg.nbytes = curr_buf->nbytes;
-				msg.cbytes = 0;
-				msg.is_compressed = false;
-				// means msg will end
-				msg.is_end = curr_buf->is_end;
+                // msg head
+                struct msgInfo msg;
+                msg.nbytes = curr_buf->nbytes;
+                msg.cbytes = 0;
+                msg.is_compressed = false;
+                // means msg will end
+                msg.is_end = curr_buf->is_end;
 
-				int max_possible_lz4_bytes = LZ4_compressBound(curr_buf->nbytes);
-				char* lz4_buf = (char *)malloc(max_possible_lz4_bytes * sizeof(char));
-				msg.cbytes = LZ4_compress_fast(curr_buf->buffer, lz4_buf, curr_buf->nbytes, max_possible_lz4_bytes, 3);
-				msg.is_compressed = true;
-				
-				char* buf = malloc(sizeof(msgInfo));
-				memcpy(buf, &msg, sizeof(msgInfo));
-				if (send_remote_obj(fd, buf, sizeof(msgInfo)) != sizeof(msgInfo)) {
-                    	printf("Write on %s msgInfo failed\n", path);
-						return -1;
-				}
+                int max_possible_lz4_bytes = LZ4_compressBound(curr_buf->nbytes);
+                char* lz4_buf = (char *)malloc(max_possible_lz4_bytes * sizeof(char));
+                msg.cbytes = LZ4_compress_fast(curr_buf->buffer, lz4_buf, curr_buf->nbytes, max_possible_lz4_bytes, 3);
+                msg.is_compressed = true;
+                
+                char* buf = malloc(sizeof(msgInfo));
+                memcpy(buf, &msg, sizeof(msgInfo));
+                if (send_remote_obj(fd, buf, sizeof(msgInfo)) != sizeof(msgInfo)) {
+                        printf("Write on %s msgInfo failed\n", path);
+                        return -1;
+                }
 
-				if (send_remote_obj(fd, lz4_buf, msg.cbytes) == msg.cbytes) {
-						bytes += msg.cbytes;
-						if (msg.is_end) {
-								printf("Finished forwarding %s (%d full blocks) total %d\n",
-										path, nblocks, bytes);
-                                		close(fd);
-                                		return bytes;
-						}
+                if (send_remote_obj(fd, lz4_buf, msg.cbytes) == msg.cbytes) {
+                        bytes += msg.cbytes;
+                        if (msg.is_end) {
+                                printf("Finished forwarding %s (%d full blocks) total %d\n",
+                                        path, nblocks, bytes);
+                        close(fd);
+                        return bytes;
+                }
                         nblocks++;
-				} else {
-                    	printf("Write on %s msgData failed\n", path);
-						return -1;
-				}
+                } else {
+                        printf("Write on %s msgData failed\n", path);
+                        return -1;
+                }
                	curr_buf = list_entry(curr_buf->l.next, remote_buffer, l);
         }
 }
