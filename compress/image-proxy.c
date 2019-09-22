@@ -56,12 +56,14 @@ void* proxy_remote_image(void* ptr)
                 return NULL;
         }
         finalize_put_rimg(rimg);
+        // 计时
         struct timeval start, end;
         gettimeofday(&start, NULL);
        	//if (!strncmp(rimg->path, "pages-", 6))
         //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
 		//else
 
+        // lz4压缩
         send_remote_image_lz4(rimg->dst_fd, rimg->path, &(rimg->buf_head));
 		// else
         //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
