@@ -56,51 +56,12 @@ void* proxy_remote_image(void* ptr)
                 return NULL;
         }
         finalize_put_rimg(rimg);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-        // 计时
->>>>>>> Stashed changes
-=======
-        // 计时
->>>>>>> Stashed changes
-=======
-        // 计时
->>>>>>> Stashed changes
-=======
-        // 计时
->>>>>>> Stashed changes
-=======
-        // 计时
->>>>>>> Stashed changes
         struct timeval start, end;
         gettimeofday(&start, NULL);
        	//if (!strncmp(rimg->path, "pages-", 6))
         //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
 		//else
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-        // lz4压缩
->>>>>>> Stashed changes
-=======
-        // lz4压缩
->>>>>>> Stashed changes
-=======
-        // lz4压缩
->>>>>>> Stashed changes
-=======
-        // lz4压缩
->>>>>>> Stashed changes
-=======
-        // lz4压缩
->>>>>>> Stashed changes
+
         send_remote_image_lz4(rimg->dst_fd, rimg->path, &(rimg->buf_head));
 		// else
         //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
