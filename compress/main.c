@@ -19,6 +19,7 @@
 #include "image-remote.h"
 
 // #define IMAGE_DIR "/tmp/transport/dump/pagemap-2344.img"
+// ./main <cntr_dst ip addr> 9996 传入的是目标机器的ip 和 port
 
 int main(int argc, char *argv[])
 {

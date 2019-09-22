@@ -34,26 +34,31 @@ static inline void __list_add(struct list_head *new,
 	prev->next	= new;
 }
 
+// 插入一个元素到head的后面
 static inline void list_add(struct list_head *new, struct list_head *head)
 {
 	__list_add(new, head, head->next);
 }
 
+// 插入一个元素到head的前面，也就是链表的最后面
 static inline void list_add_tail(struct list_head *new, struct list_head *head)
 {
 	__list_add(new, head->prev, head);
 }
 
+//删除一个元素
 static inline void __list_del(struct list_head * prev, struct list_head * next)
 {
 	next->prev = prev;
 	prev->next = next;
 }
 
+//链表中删除一个表项
 static inline void __list_del_entry(struct list_head *entry)
 {
 	__list_del(entry->prev, entry->next);
 }
+
 
 static inline void list_del(struct list_head *entry)
 {
@@ -62,6 +67,7 @@ static inline void list_del(struct list_head *entry)
 	entry->prev = LIST_POISON2;
 }
 
+// 用新的结点替换旧的结点
 static inline void list_replace(struct list_head *old,
 				struct list_head *new)
 {
@@ -84,6 +90,7 @@ static inline void list_del_init(struct list_head *entry)
 	INIT_LIST_HEAD(entry);
 }
 
+// 把list指向的结点移到head的后面
 static inline void list_move(struct list_head *list, struct list_head *head)
 {
 	__list_del_entry(list);
@@ -97,18 +104,21 @@ static inline void list_move_tail(struct list_head *list,
 	list_add_tail(list, head);
 }
 
+// 判断是否最后一个结点
 static inline int list_is_last(const struct list_head *list,
 				const struct list_head *head)
 {
 	return list->next == head;
 }
 
+// 判断是否第一个节点
 static inline int list_is_first(const struct list_head *list,
 				const struct list_head *head)
 {
 	return list->prev == head;
 }
 
+// 判断是否空链表
 static inline int list_empty(const struct list_head *head)
 {
 	return head->next == head;
@@ -205,7 +215,7 @@ static inline void list_splice_tail_init(struct list_head *list,
 		INIT_LIST_HEAD(list);
 	}
 }
-
+// container_of可以找出ptr所在的那个结构体的地址
 #define list_entry(ptr, type, member)				\
 	container_of(ptr, type, member)
 

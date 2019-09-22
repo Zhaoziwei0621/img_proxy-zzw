@@ -31,7 +31,7 @@ typedef struct rimg {
     char namespace[PATHLEN];
     int src_fd;
     int dst_fd;
-    struct list_head l;
+    struct list_head l; // 双向链表结构体
     struct list_head buf_head;
 } remote_image;
 
@@ -42,8 +42,8 @@ typedef struct msgInfo {
 	bool is_end;
 } msgInfo;
 
-int init_cache();
-int init_proxy();
+int init_cache(); // 缓存模块要用
+int init_proxy(); // 代理模块要用
 
 void join_workers();
 remote_image* wait_for_image(int cli_fd, char* namespace, char* path);

@@ -75,7 +75,7 @@ int write_header(int fd, char* namespace, char* path)
 }
 
 int read_header(int fd, char* namespace, char* path)
-{
+{// 将namespace和path读到相应的变量中
         int n = read(fd, path, PATHLEN);
         if (n < 0) {
                 perror("Error reading from remote image socket");

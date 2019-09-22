@@ -28,12 +28,14 @@ static unsigned short dst_port = CACHE_PUT_PORT;
 void* proxy_remote_image(void* ptr)
 {
         remote_image* rimg = (remote_image*) ptr;
+        // 作为客户端，连接的是目的端的机器
         rimg->dst_fd = prepare_client_socket(dst_host, dst_port);
         if (rimg->dst_fd < 0) {
                 perror("Unable to open recover image socket");
                 return NULL;
         }
 
+        // 将namespace和path写入socket
         if(write_header(rimg->dst_fd, rimg->namespace, rimg->path) < 0) {
                 printf("Error writing header for %s:%s",
                         rimg->path, rimg->namespace);
@@ -49,15 +51,24 @@ void* proxy_remote_image(void* ptr)
             return NULL;
 	}
 
+        // 得到镜像数据
         if (recv_remote_image(rimg->src_fd, rimg->path, &(rimg->buf_head)) < 0) {
                 return NULL;
         }
         finalize_put_rimg(rimg);
+<<<<<<< Updated upstream
+=======
+        // 计时
+>>>>>>> Stashed changes
         struct timeval start, end;
         gettimeofday(&start, NULL);
        	//if (!strncmp(rimg->path, "pages-", 6))
         //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
 		//else
+<<<<<<< Updated upstream
+=======
+        // lz4压缩
+>>>>>>> Stashed changes
         send_remote_image_lz4(rimg->dst_fd, rimg->path, &(rimg->buf_head));
 		// else
         //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
@@ -66,6 +77,7 @@ void* proxy_remote_image(void* ptr)
         return NULL;
 }
 
+// fwd_host : forward host 发送主机
 int image_proxy(char* fwd_host, unsigned short fwd_port)
 {
         pthread_t get_thr, put_thr;
@@ -79,7 +91,7 @@ int image_proxy(char* fwd_host, unsigned short fwd_port)
 
         put_fd = prepare_server_socket(PROXY_PUT_PORT);
         get_fd = prepare_server_socket(PROXY_GET_PORT);
-        if(init_proxy())
+        if(init_proxy()) // 初始化，函数指针赋值
                 return -1;
 
         if (pthread_create(
