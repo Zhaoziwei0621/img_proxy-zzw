@@ -394,10 +394,10 @@ int recv_remote_image(int fd, char* path, struct list_head* rbuff_head)
                 n = read(fd,
                 curr_buf->buffer + curr_buf->nbytes,
                 BUF_SIZE - curr_buf->nbytes);
-                if (n == 0) { // 如果数据读完
+                if (n == 0) { // 如果没有读到数据
                         printf("Finished receiving %s (%d full blocks, %d bytes on last block)\n",
                                 path, nblocks, curr_buf->nbytes);
-                        // 如果buffer里面已经没有数据了
+                        // 如果buffer里面没有数据，那么前一个buf中is_end置true
                         if (curr_buf->nbytes == 0) {
                                 remote_buffer* prev_buf = list_entry(curr_buf->l.prev, remote_buffer, l);
                                 prev_buf->is_end = 1;

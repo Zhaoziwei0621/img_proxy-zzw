@@ -47,23 +47,23 @@ void* proxy_remote_image(void* ptr)
             close(rimg->dst_fd);
             finalize_put_rimg(rimg);
             return NULL;
-		}
+	}
 
         if (recv_remote_image(rimg->src_fd, rimg->path, &(rimg->buf_head)) < 0) {
                 return NULL;
         }
         finalize_put_rimg(rimg);
-		struct timeval start, end;
-		gettimeofday(&start, NULL);
+        struct timeval start, end;
+        gettimeofday(&start, NULL);
        	//if (!strncmp(rimg->path, "pages-", 6))
         //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
 		//else
-        	send_remote_image_lz4(rimg->dst_fd, rimg->path, &(rimg->buf_head));
+        send_remote_image_lz4(rimg->dst_fd, rimg->path, &(rimg->buf_head));
 		// else
         //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
-		gettimeofday(&end, NULL);
-		printf("%s send start %ld:%ld, end %ld:%ld\n", rimg->path, start.tv_sec, start.tv_usec, end.tv_sec, end.tv_usec);
-		return NULL;
+        gettimeofday(&end, NULL);
+        printf("%s send start %ld:%ld, end %ld:%ld\n", rimg->path, start.tv_sec, start.tv_usec, end.tv_sec, end.tv_usec);
+        return NULL;
 }
 
 int image_proxy(char* fwd_host, unsigned short fwd_port)
