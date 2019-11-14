@@ -42,6 +42,7 @@ void* proxy_remote_image(void* ptr)
                 return NULL;
         }
 
+        // 准备传输镜像，putting++
         prepare_put_rimg();
 
         if (!strncmp(rimg->path, DUMP_FINISH, sizeof(DUMP_FINISH)))
@@ -73,6 +74,8 @@ void* proxy_remote_image(void* ptr)
 }
 
 // fwd_host : forward host 发送主机
+// fwd_host 对应 cache_host
+// fwd_port 对应 cache_port
 int image_proxy(char* fwd_host, unsigned short fwd_port)
 {
         pthread_t get_thr, put_thr;
@@ -84,16 +87,18 @@ int image_proxy(char* fwd_host, unsigned short fwd_port)
         printf("Proxy Get Port %d, Put Port %d, Destination Host %s:%hu\n",
                 PROXY_GET_PORT, PROXY_PUT_PORT, fwd_host, fwd_port);
 
-        put_fd = prepare_server_socket(PROXY_PUT_PORT);
-        get_fd = prepare_server_socket(PROXY_GET_PORT);
+        put_fd = prepare_server_socket(PROXY_PUT_PORT); //9996
+        get_fd = prepare_server_socket(PROXY_GET_PORT); //9995
         if(init_proxy()) // 初始化，函数指针赋值
                 return -1;
 
+        // 创建线程执行 accept_put_image_connections() 函数
         if (pthread_create(
             &put_thr, NULL, accept_put_image_connections, (void*) &put_fd)) {
                 perror("Unable to create put thread");
                 return -1;
         }
+        // 创建线程执行 accept_get_image_connections() 函数
         if (pthread_create(
             &get_thr, NULL, accept_get_image_connections, (void*) &get_fd)) {
                 perror("Unable to create get thread");

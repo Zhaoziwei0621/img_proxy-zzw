@@ -19,7 +19,8 @@
 #include "image-remote.h"
 
 // #define IMAGE_DIR "/tmp/transport/dump/pagemap-2344.img"
-// ./main <cntr_dst ip addr> 9996 传入的是目标机器的ip 和 port
+// ./main <cntr_dst ip addr> 9996 传入的是目标机器的ip 和 端口号
+// cntr_dst被宏定义修改为默认的ip地址：192.168.6.146
 
 int main(int argc, char *argv[])
 {
@@ -30,7 +31,7 @@ int main(int argc, char *argv[])
 
 	printf("Client ip=%s , port=%d\n", argv[1], atoi(argv[2]));
 
-	if (image_proxy(argv[1], atoi(argv[2]))) {
+	if (image_proxy(argv[1], atoi(argv[2]))) { //调用代理函数，IP + 端口号
 		printf("Send image failed\n");
 		return -1;
 	}

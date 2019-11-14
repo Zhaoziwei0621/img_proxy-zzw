@@ -18,9 +18,9 @@ typedef struct wthread {
     struct list_head l;
 } worker_thread;
 
-static LIST_HEAD(rimg_head);
-static pthread_mutex_t rimg_lock;
-static sem_t rimg_semph;
+static LIST_HEAD(rimg_head); // 生成双向循环列表结构的空的头结点
+static pthread_mutex_t rimg_lock; // 线程互斥锁
+static sem_t rimg_semph; // 信号量
 
 static LIST_HEAD(workers_head);
 static pthread_mutex_t workers_lock;
@@ -32,29 +32,31 @@ static int putting = 0;
 static void* (*get_func)(void*);
 static void* (*put_func)(void*);
 
+// 根据path和namespace获取镜像数据
 static remote_image* get_rimg_by_name(const char* namespace, const char* path)
 {
         remote_image* rimg = NULL;
-        pthread_mutex_lock(&rimg_lock);
-        list_for_each_entry(rimg, &rimg_head, l) {
+        pthread_mutex_lock(&rimg_lock); // 线程互斥锁
+        list_for_each_entry(rimg, &rimg_head, l) { //通过双向循环链表l循环获取rimg结构的地址
                 if( !strncmp(rimg->path, path, PATHLEN) &&
                     !strncmp(rimg->namespace, namespace, PATHLEN)) {
                         pthread_mutex_unlock(&rimg_lock);
                         return rimg;
                 }
         }
-        pthread_mutex_unlock(&rimg_lock);
+        pthread_mutex_unlock(&rimg_lock);  // 线程互斥锁解锁
         return NULL;
 }
 
+// 初始化线程锁和信号量
 int init_sync_structures()
 {
-        if (pthread_mutex_init(&rimg_lock, NULL) != 0) {
+        if (pthread_mutex_init(&rimg_lock, NULL) != 0) { //线程互斥锁的初始化
                 perror("Remote image connection mutex init failed");
                 return -1;
         }
 
-        if (sem_init(&rimg_semph, 0, 0) != 0) {
+        if (sem_init(&rimg_semph, 0, 0) != 0) { //信号量的初始化
                 perror("Remote image connection semaphore init failed");
                 return -1;
         }
@@ -71,11 +73,12 @@ int init_sync_structures()
         return 0;
 }
 
+// 通过套接字从CRIU获取镜像文件
 // fd 是通信套接字
 void* get_remote_image(void* fd)
 {
         int cli_fd = (long) fd;
-        remote_image* rimg = NULL; //保存镜像文件结构体
+        remote_image* rimg = NULL; // 保存镜像文件结构体
         char path_buf[PATHLEN];
         char namespace_buf[PATHLEN];
 
@@ -92,6 +95,7 @@ void* get_remote_image(void* fd)
         if (!rimg)
                 return NULL;
 
+        // 发送镜像数据
         rimg->dst_fd = cli_fd;
         send_remote_image(rimg->dst_fd, rimg->path, &rimg->buf_head);
         return NULL;
@@ -129,33 +133,39 @@ int init_cache()
 }
 */
 
+// 准备服务端socket连接
 int prepare_server_socket(int port)
 {
         struct sockaddr_in serv_addr;
         int sockopt = 1;
 
+        // 函数原型：int socket(int domain, int type, int protocol)
+        // domain指定协议域，type选择socket类型，protocol指定协议（为0自动对应type的默认协议）
         int sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) {
                 perror("Unable to open image socket");
                 return -1;
         }
 
-        bzero((char *) &serv_addr, sizeof (serv_addr));
+        bzero((char *) &serv_addr, sizeof (serv_addr)); //每个字节用0填充
         serv_addr.sin_family = AF_INET;
         serv_addr.sin_addr.s_addr = INADDR_ANY;
         serv_addr.sin_port = htons(port);
 
+        // SOL_SOCKET：套接字层次；SO_REUSERADDR：允许重用本地地址和端口
         if (setsockopt(
             sockfd, SOL_SOCKET, SO_REUSEADDR, &sockopt, sizeof (sockopt)) == -1) {
                 perror("Unable to set SO_REUSEADDR");
                 return -1;
         }
 
+        // 绑定
         if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
                 perror("Unable to bind image socket");
                 return -1;
         }
 
+        // 监听
         if (listen(sockfd, DEFAULT_LISTEN)) {
                 perror("Unable to listen image socket");
                 return -1;
@@ -164,6 +174,7 @@ int prepare_server_socket(int port)
         return sockfd;
 }
 
+// 准备客户端socket连接
 int prepare_client_socket(char* hostname, int port)
 {
         struct hostent *server;
@@ -458,6 +469,7 @@ int send_remote_image(int fd, char* path, struct list_head* rbuff_head)
 
 	nblocks = 0;
 		
+        // 循环发送镜像数据
         while(1) {
                 // msg head
                 struct msgInfo msg; //？msg里记录的是数据的元数据

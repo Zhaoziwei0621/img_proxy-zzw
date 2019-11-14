@@ -1,0 +1,454 @@
+
+Client ip=192.168.6.146 , port=9996
+Proxy Get Port 9995, Put Port 9996, Destination Host 192.168.6.146:9996
+INFO[11934] No non-localhost DNS nameservers are left in resolv.conf. Using default external servers: [nameserver 8.8.8.8 nameserver 8.8.4.4]
+INFO[11934] IPv6 enabled; Adding default IPv6 external servers: [nameserver 2001:4860:4860::8888 nameserver 2001:4860:4860::8844]
+Received GET for parent:null.
+Reveiced PUT request for parent:null
+Serving PUT request for parent:null (tid=140544310585088)
+Finished receiving parent (0 full blocks, 32 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding parent (0 full blocks) total 34
+parent send start 1572332101:976887, end 1572332101:977820
+Reveiced PUT request for reg-files.img:/tmp/dump/checkpoint1
+Serving PUT request for reg-files.img:/tmp/dump/checkpoint1 (tid=140544310585088)
+Reveiced PUT request for ids-1.img:/tmp/dump/checkpoint1
+Serving PUT request for ids-1.img:/tmp/dump/checkpoint1 (tid=140544302192384)
+Reveiced PUT request for pipes.img:/tmp/dump/checkpoint1
+Serving PUT request for pipes.img:/tmp/dump/checkpoint1 (tid=140544293271296)
+Reveiced PUT request for pipes-data.img:/tmp/dump/checkpoint1
+Serving PUT request for pipes-data.img:/tmp/dump/checkpoint1 (tid=140543946389248)
+Reveiced PUT request for fdinfo-2.img:/tmp/dump/checkpoint1
+Serving PUT request for fdinfo-2.img:/tmp/dump/checkpoint1 (tid=140543937996544)
+Reveiced PUT request for pagemap-1.img:/tmp/dump/checkpoint1
+Serving PUT request for pagemap-1.img:/tmp/dump/checkpoint1 (tid=140543929603840)
+Reveiced PUT request for pages-1.img:/tmp/dump/checkpoint1
+Finished receiving fdinfo-2.img (0 full blocks, 56 bytes on last block)
+Serving PUT request for pages-1.img:/tmp/dump/checkpoint1 (tid=140543921211136)
+......the acceleration is 7
+
+Finished forwarding fdinfo-2.img (0 full blocks) total 58
+fdinfo-2.img send start 1572332102:19299, end 1572332102:20045
+Finished receiving pagemap-1.img (0 full blocks, 154 bytes on last block)
+Reveiced PUT request for sigacts-1.img:/tmp/dump/checkpoint1
+Serving PUT request for sigacts-1.img:/tmp/dump/checkpoint1 (tid=140543912818432)
+Finished receiving pages-1.img (0 full blocks, 126976 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding pagemap-1.img (0 full blocks) total 129
+pagemap-1.img send start 1572332102:20693, end 1572332102:21401
+......the acceleration is 7
+
+Finished forwarding pages-1.img (0 full blocks) total 25477
+pages-1.img send start 1572332102:21200, end 1572332102:23634
+Reveiced PUT request for core-1.img:/tmp/dump/checkpoint1
+Serving PUT request for core-1.img:/tmp/dump/checkpoint1 (tid=140543903897344)
+Reveiced PUT request for mm-1.img:/tmp/dump/checkpoint1
+Serving PUT request for mm-1.img:/tmp/dump/checkpoint1 (tid=140543894976256)
+Reveiced PUT request for fs-1.img:/tmp/dump/checkpoint1
+Serving PUT request for fs-1.img:/tmp/dump/checkpoint1 (tid=140543677953792)
+Finished receiving core-1.img (0 full blocks, 876 bytes on last block)
+Finished receiving ids-1.img (0 full blocks, 34 bytes on last block)
+Finished receiving sigacts-1.img (0 full blocks, 960 bytes on last block)
+......the acceleration is 7
+
+......the acceleration is 7
+
+Finished forwarding sigacts-1.img (0 full blocks) total 171
+sigacts-1.img send start 1572332102:443583, end 1572332102:444374
+Finished forwarding ids-1.img (0 full blocks) total 36
+ids-1.img send start 1572332102:443565, end 1572332102:444606
+Finished receiving mm-1.img (0 full blocks, 881 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding core-1.img (0 full blocks) total 640
+core-1.img send start 1572332102:443528, end 1572332102:444948
+Finished receiving fs-1.img (0 full blocks, 18 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding fs-1.img (0 full blocks) total 20
+fs-1.img send start 1572332102:447373, end 1572332102:447577
+......the acceleration is 7
+
+Finished forwarding mm-1.img (0 full blocks) total 773
+mm-1.img send start 1572332102:444717, end 1572332102:447851
+Reveiced PUT request for ids-8.img:/tmp/dump/checkpoint1
+Serving PUT request for ids-8.img:/tmp/dump/checkpoint1 (tid=140543669561088)
+Reveiced PUT request for fdinfo-3.img:/tmp/dump/checkpoint1
+Serving PUT request for fdinfo-3.img:/tmp/dump/checkpoint1 (tid=140543661168384)
+Reveiced PUT request for pagemap-8.img:/tmp/dump/checkpoint1
+Serving PUT request for pagemap-8.img:/tmp/dump/checkpoint1 (tid=140543652775680)
+Reveiced PUT request for pages-2.img:/tmp/dump/checkpoint1
+Serving PUT request for pages-2.img:/tmp/dump/checkpoint1 (tid=140543644382976)
+Finished receiving fdinfo-3.img (0 full blocks, 57 bytes on last block)
+Finished receiving pagemap-8.img (0 full blocks, 249 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding fdinfo-3.img (0 full blocks) total 59
+Reveiced PUT request for sigacts-8.img:/tmp/dump/checkpoint1
+fdinfo-3.img send start 1572332102:450273, end 1572332102:451002
+Serving PUT request for sigacts-8.img:/tmp/dump/checkpoint1 (tid=140543635990272)
+Reveiced PUT request for core-8.img:/tmp/dump/checkpoint1
+Serving PUT request for core-8.img:/tmp/dump/checkpoint1 (tid=140543627597568)
+......the acceleration is 7
+
+Finished forwarding pagemap-8.img (0 full blocks) total 203
+pagemap-8.img send start 1572332102:450739, end 1572332102:452070
+Finished receiving pages-2.img (2 full blocks, 245760 bytes on last block)
+......the acceleration is 7
+
+Reveiced PUT request for mm-8.img:/tmp/dump/checkpoint1
+Serving PUT request for mm-8.img:/tmp/dump/checkpoint1 (tid=140543476627200)
+Reveiced PUT request for fs-8.img:/tmp/dump/checkpoint1
+Serving PUT request for fs-8.img:/tmp/dump/checkpoint1 (tid=140543468234496)
+Finished receiving core-8.img (0 full blocks, 901 bytes on last block)
+Finished receiving ids-8.img (0 full blocks, 34 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding core-8.img (0 full blocks) total 648
+core-8.img send start 1572332102:469698, end 1572332102:470809
+Finished receiving sigacts-8.img (0 full blocks, 937 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding ids-8.img (0 full blocks) total 36
+ids-8.img send start 1572332102:469756, end 1572332102:471256
+......the acceleration is 7
+
+Finished forwarding sigacts-8.img (0 full blocks) total 146
+sigacts-8.img send start 1572332102:471009, end 1572332102:471588
+Finished receiving mm-8.img (0 full blocks, 1690 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding mm-8.img (0 full blocks) total 1286
+mm-8.img send start 1572332102:471777, end 1572332102:472056
+Finished receiving fs-8.img (0 full blocks, 18 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding fs-8.img (0 full blocks) total 20
+fs-8.img send start 1572332102:473534, end 1572332102:474173
+Reveiced PUT request for ids-333.img:/tmp/dump/checkpoint1
+Serving PUT request for ids-333.img:/tmp/dump/checkpoint1 (tid=140543459841792)
+Reveiced PUT request for fdinfo-4.img:/tmp/dump/checkpoint1
+Serving PUT request for fdinfo-4.img:/tmp/dump/checkpoint1 (tid=140543451449088)
+Finished receiving fdinfo-4.img (0 full blocks, 56 bytes on last block)
+Reveiced PUT request for pagemap-333.img:/tmp/dump/checkpoint1
+Serving PUT request for pagemap-333.img:/tmp/dump/checkpoint1 (tid=140543443056384)
+Reveiced PUT request for pages-3.img:/tmp/dump/checkpoint1
+Serving PUT request for pages-3.img:/tmp/dump/checkpoint1 (tid=140543434663680)
+......the acceleration is 7
+
+......the acceleration is 7
+
+Finished forwarding fdinfo-4.img (0 full blocks) total 58
+fdinfo-4.img send start 1572332102:475705, end 1572332102:476740
+Finished receiving pagemap-333.img (0 full blocks, 235 bytes on last block)
+Reveiced PUT request for sigacts-333.img:/tmp/dump/checkpoint1
+Serving PUT request for sigacts-333.img:/tmp/dump/checkpoint1 (tid=140543426270976)
+......the acceleration is 7
+
+Finished forwarding pagemap-333.img (0 full blocks) total 195
+pagemap-333.img send start 1572332102:477777, end 1572332102:478681
+Finished receiving pages-3.img (2 full blocks, 249856 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding pages-2.img (2 full blocks) total 333104
+pages-2.img send start 1572332102:452406, end 1572332102:480533
+Reveiced PUT request for core-333.img:/tmp/dump/checkpoint1
+Serving PUT request for core-333.img:/tmp/dump/checkpoint1 (tid=140543417878272)
+......the acceleration is 7
+
+Reveiced PUT request for mm-333.img:/tmp/dump/checkpoint1
+Serving PUT request for mm-333.img:/tmp/dump/checkpoint1 (tid=140543409485568)
+Reveiced PUT request for fs-333.img:/tmp/dump/checkpoint1
+Serving PUT request for fs-333.img:/tmp/dump/checkpoint1 (tid=140543401092864)
+Finished receiving core-333.img (0 full blocks, 884 bytes on last block)
+Finished receiving ids-333.img (0 full blocks, 34 bytes on last block)
+Finished receiving sigacts-333.img (0 full blocks, 937 bytes on last block)
+Finished receiving mm-333.img (0 full blocks, 1690 bytes on last block)
+......the acceleration is 7
+
+......the acceleration is 7
+
+Finished forwarding sigacts-333.img (0 full blocks) total 146
+sigacts-333.img send start 1572332102:497861, end 1572332102:498496
+Finished forwarding ids-333.img (0 full blocks) total 36
+......the acceleration is 7
+
+Finished forwarding mm-333.img (0 full blocks) total 1286
+mm-333.img send start 1572332102:498336, end 1572332102:498896
+......the acceleration is 7
+
+ids-333.img send start 1572332102:497806, end 1572332102:499014
+Finished forwarding core-333.img (0 full blocks) total 589
+core-333.img send start 1572332102:497777, end 1572332102:499211
+Finished receiving fs-333.img (0 full blocks, 18 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding fs-333.img (0 full blocks) total 20
+fs-333.img send start 1572332102:500759, end 1572332102:501478
+......the acceleration is 7
+
+Reveiced PUT request for ids-336.img:/tmp/dump/checkpoint1
+Serving PUT request for ids-336.img:/tmp/dump/checkpoint1 (tid=140543392700160)
+Reveiced PUT request for fdinfo-5.img:/tmp/dump/checkpoint1
+Serving PUT request for fdinfo-5.img:/tmp/dump/checkpoint1 (tid=140543384307456)
+Reveiced PUT request for pagemap-336.img:/tmp/dump/checkpoint1
+Serving PUT request for pagemap-336.img:/tmp/dump/checkpoint1 (tid=140543375914752)
+Reveiced PUT request for pages-4.img:/tmp/dump/checkpoint1
+Serving PUT request for pages-4.img:/tmp/dump/checkpoint1 (tid=140543366993664)
+Finished receiving fdinfo-5.img (0 full blocks, 44 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding fdinfo-5.img (0 full blocks) total 46
+fdinfo-5.img send start 1572332102:505818, end 1572332102:506787
+......the acceleration is 7
+
+Finished forwarding pages-3.img (2 full blocks) total 331092
+pages-3.img send start 1572332102:479802, end 1572332102:507379
+Finished receiving pagemap-336.img (0 full blocks, 532 bytes on last block)
+Reveiced PUT request for sigacts-336.img:/tmp/dump/checkpoint1
+Serving PUT request for sigacts-336.img:/tmp/dump/checkpoint1 (tid=140543358072576)
+......the acceleration is 7
+
+Finished forwarding pagemap-336.img (0 full blocks) total 334
+pagemap-336.img send start 1572332102:507734, end 1572332102:508694
+Reveiced PUT request for core-336.img:/tmp/dump/checkpoint1
+Serving PUT request for core-336.img:/tmp/dump/checkpoint1 (tid=140543275300608)
+Finished receiving pages-4.img (1 full blocks, 184320 bytes on last block)
+......the acceleration is 7
+
+......the acceleration is 7
+
+Finished forwarding pages-4.img (1 full blocks) total 155264
+pages-4.img send start 1572332102:510040, end 1572332102:516995
+Reveiced PUT request for mm-336.img:/tmp/dump/checkpoint1
+Serving PUT request for mm-336.img:/tmp/dump/checkpoint1 (tid=140543266907904)
+Reveiced PUT request for fs-336.img:/tmp/dump/checkpoint1
+Serving PUT request for fs-336.img:/tmp/dump/checkpoint1 (tid=140543258515200)
+Finished receiving ids-336.img (0 full blocks, 34 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding ids-336.img (0 full blocks) total 36
+ids-336.img send start 1572332102:526385, end 1572332102:526976
+Finished receiving sigacts-336.img (0 full blocks, 907 bytes on last block)
+Finished receiving mm-336.img (0 full blocks, 2239 bytes on last block)
+Finished receiving fs-336.img (0 full blocks, 18 bytes on last block)
+......the acceleration is 7
+
+......the acceleration is 7
+
+Finished forwarding fs-336.img (0 full blocks) total 20
+Finished receiving core-336.img (0 full blocks, 960 bytes on last block)
+......the acceleration is 7
+
+fs-336.img send start 1572332102:527583, end 1572332102:528424
+Finished forwarding sigacts-336.img (0 full blocks) total 108
+Finished forwarding mm-336.img (0 full blocks) total 1622
+mm-336.img send start 1572332102:527461, end 1572332102:528549
+sigacts-336.img send start 1572332102:527132, end 1572332102:528649
+......the acceleration is 7
+
+Finished forwarding core-336.img (0 full blocks) total 742
+core-336.img send start 1572332102:528782, end 1572332102:529002
+Reveiced PUT request for ids-334.img:/tmp/dump/checkpoint1
+Serving PUT request for ids-334.img:/tmp/dump/checkpoint1 (tid=140543250122496)
+Reveiced PUT request for fdinfo-6.img:/tmp/dump/checkpoint1
+Serving PUT request for fdinfo-6.img:/tmp/dump/checkpoint1 (tid=140543241729792)
+Reveiced PUT request for pagemap-334.img:/tmp/dump/checkpoint1
+Serving PUT request for pagemap-334.img:/tmp/dump/checkpoint1 (tid=140543233337088)
+Reveiced PUT request for pages-5.img:/tmp/dump/checkpoint1
+Serving PUT request for pages-5.img:/tmp/dump/checkpoint1 (tid=140543224944384)
+Finished receiving fdinfo-6.img (0 full blocks, 56 bytes on last block)
+Finished receiving pages-5.img (0 full blocks, 106496 bytes on last block)
+Finished receiving pagemap-334.img (0 full blocks, 154 bytes on last block)
+Reveiced PUT request for sigacts-334.img:/tmp/dump/checkpoint1
+......the acceleration is 7
+
+Finished forwarding fdinfo-6.img (0 full blocks) total 58
+fdinfo-6.img send start 1572332102:531812, end 1572332102:532643
+Serving PUT request for sigacts-334.img:/tmp/dump/checkpoint1 (tid=140543216551680)
+......the acceleration is 7
+
+Finished forwarding pagemap-334.img (0 full blocks) total 130
+Reveiced PUT request for core-334.img:/tmp/dump/checkpoint1
+pagemap-334.img send start 1572332102:532378, end 1572332102:533306
+Serving PUT request for core-334.img:/tmp/dump/checkpoint1 (tid=140543208158976)
+......the acceleration is 7
+
+Finished forwarding pages-5.img (0 full blocks) total 20792
+pages-5.img send start 1572332102:532242, end 1572332102:534616
+Reveiced PUT request for mm-334.img:/tmp/dump/checkpoint1
+Serving PUT request for mm-334.img:/tmp/dump/checkpoint1 (tid=140543199766272)
+Reveiced PUT request for fs-334.img:/tmp/dump/checkpoint1
+Serving PUT request for fs-334.img:/tmp/dump/checkpoint1 (tid=140543191373568)
+Finished receiving core-334.img (0 full blocks, 829 bytes on last block)
+Finished receiving sigacts-334.img (0 full blocks, 876 bytes on last block)
+Finished receiving ids-334.img (0 full blocks, 34 bytes on last block)
+Finished receiving mm-334.img (0 full blocks, 850 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding ids-334.img (0 full blocks) total 36
+ids-334.img send start 1572332102:549178, end 1572332102:549652
+......the acceleration is 7
+
+Finished forwarding core-334.img (0 full blocks) total 555
+core-334.img send start 1572332102:549015, end 1572332102:550318
+......the acceleration is 7
+
+Finished forwarding mm-334.img (0 full blocks) total 735
+......the acceleration is 7
+
+Finished forwarding sigacts-334.img (0 full blocks) total 36
+sigacts-334.img send start 1572332102:549135, end 1572332102:550677
+mm-334.img send start 1572332102:549999, end 1572332102:551044
+Finished receiving fs-334.img (0 full blocks, 18 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding fs-334.img (0 full blocks) total 20
+fs-334.img send start 1572332102:552334, end 1572332102:553219
+Reveiced PUT request for ids-335.img:/tmp/dump/checkpoint1
+Serving PUT request for ids-335.img:/tmp/dump/checkpoint1 (tid=140543182452480)
+Reveiced PUT request for fdinfo-7.img:/tmp/dump/checkpoint1
+Serving PUT request for fdinfo-7.img:/tmp/dump/checkpoint1 (tid=140543173531392)
+Reveiced PUT request for pagemap-335.img:/tmp/dump/checkpoint1
+Serving PUT request for pagemap-335.img:/tmp/dump/checkpoint1 (tid=140543164610304)
+Reveiced PUT request for pages-6.img:/tmp/dump/checkpoint1
+Serving PUT request for pages-6.img:/tmp/dump/checkpoint1 (tid=140543155689216)
+Finished receiving fdinfo-7.img (0 full blocks, 56 bytes on last block)
+Finished receiving pagemap-335.img (0 full blocks, 154 bytes on last block)
+Finished receiving pages-6.img (0 full blocks, 106496 bytes on last block)
+Reveiced PUT request for sigacts-335.img:/tmp/dump/checkpoint1
+Serving PUT request for sigacts-335.img:/tmp/dump/checkpoint1 (tid=140543146768128)
+......the acceleration is 7
+
+Finished forwarding pagemap-335.img (0 full blocks) total 130
+pagemap-335.img send start 1572332102:556618, end 1572332102:557502
+Reveiced PUT request for core-335.img:/tmp/dump/checkpoint1
+Serving PUT request for core-335.img:/tmp/dump/checkpoint1 (tid=140543137847040)
+......the acceleration is 7
+
+Finished forwarding fdinfo-7.img (0 full blocks) total 58
+fdinfo-7.img send start 1572332102:556171, end 1572332102:558165
+......the acceleration is 7
+
+Finished forwarding pages-6.img (0 full blocks) total 20843
+pages-6.img send start 1572332102:556846, end 1572332102:559806
+Reveiced PUT request for mm-335.img:/tmp/dump/checkpoint1
+Serving PUT request for mm-335.img:/tmp/dump/checkpoint1 (tid=140543128925952)
+Reveiced PUT request for fs-335.img:/tmp/dump/checkpoint1
+Serving PUT request for fs-335.img:/tmp/dump/checkpoint1 (tid=140543120004864)
+Finished receiving core-335.img (0 full blocks, 829 bytes on last block)
+Finished receiving ids-335.img (0 full blocks, 34 bytes on last block)
+Finished receiving sigacts-335.img (0 full blocks, 876 bytes on last block)
+......the acceleration is 7
+
+......the acceleration is 7
+
+......the acceleration is 7
+
+Finished forwarding sigacts-335.img (0 full blocks) total 36
+Finished forwarding ids-335.img (0 full blocks) total 36
+ids-335.img send start 1572332102:574449, end 1572332102:575216
+Finished receiving mm-335.img (0 full blocks, 850 bytes on last block)
+Finished forwarding core-335.img (0 full blocks) total 555
+sigacts-335.img send start 1572332102:574511, end 1572332102:575188
+core-335.img send start 1572332102:574405, end 1572332102:575311
+Finished receiving fs-335.img (0 full blocks, 18 bytes on last block)
+Reveiced PUT request for tmpfs-dev-49.tar.gz.img:/tmp/dump/checkpoint1
+Serving PUT request for tmpfs-dev-49.tar.gz.img:/tmp/dump/checkpoint1 (tid=140543111083776)
+......the acceleration is 7
+
+Finished forwarding mm-335.img (0 full blocks) total 733
+mm-335.img send start 1572332102:575493, end 1572332102:576440
+......the acceleration is 7
+
+Finished forwarding fs-335.img (0 full blocks) total 20
+fs-335.img send start 1572332102:575857, end 1572332102:576797
+Finished receiving tmpfs-dev-49.tar.gz.img (0 full blocks, 98 bytes on last block)
+Reveiced PUT request for mountpoints-12.img:/tmp/dump/checkpoint1
+Serving PUT request for mountpoints-12.img:/tmp/dump/checkpoint1 (tid=140543102162688)
+......the acceleration is 7
+
+Finished forwarding tmpfs-dev-49.tar.gz.img (0 full blocks) total 100
+tmpfs-dev-49.tar.gz.img send start 1572332102:595514, end 1572332102:596395
+Reveiced PUT request for tmpfs-dev-45.tar.gz.img:/tmp/dump/checkpoint1
+Serving PUT request for tmpfs-dev-45.tar.gz.img:/tmp/dump/checkpoint1 (tid=140543093241600)
+Finished receiving tmpfs-dev-45.tar.gz.img (0 full blocks, 384 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding tmpfs-dev-45.tar.gz.img (0 full blocks) total 387
+tmpfs-dev-45.tar.gz.img send start 1572332102:639148, end 1572332102:639786
+Reveiced PUT request for tmpfs-dev-48.tar.gz.img:/tmp/dump/checkpoint1
+Serving PUT request for tmpfs-dev-48.tar.gz.img:/tmp/dump/checkpoint1 (tid=140543084320512)
+Finished receiving tmpfs-dev-48.tar.gz.img (0 full blocks, 298 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding tmpfs-dev-48.tar.gz.img (0 full blocks) total 301
+tmpfs-dev-48.tar.gz.img send start 1572332102:674376, end 1572332102:675072
+Reveiced PUT request for tmpfs-dev-45.tar.gz.img:/tmp/dump/checkpoint1
+Clearing previous images for tmpfs-dev-45.tar.gz.img:/tmp/dump/checkpoint1
+Serving PUT request for tmpfs-dev-45.tar.gz.img:/tmp/dump/checkpoint1 (tid=140543075927808)
+Finished receiving tmpfs-dev-45.tar.gz.img (0 full blocks, 384 bytes on last block)
+Finished receiving mountpoints-12.img (0 full blocks, 3775 bytes on last block)
+Reveiced PUT request for pstree.img:/tmp/dump/checkpoint1
+Serving PUT request for pstree.img:/tmp/dump/checkpoint1 (tid=140543067006720)
+Reveiced PUT request for ipcns-var-10.img:/tmp/dump/checkpoint1
+......the acceleration is 7
+
+......the acceleration is 7
+
+Finished forwarding tmpfs-dev-45.tar.gz.img (0 full blocks) total 387
+tmpfs-dev-45.tar.gz.img send start 1572332102:709782, end 1572332102:711462
+Serving PUT request for ipcns-var-10.img:/tmp/dump/checkpoint1 (tid=140543058085632)
+Finished forwarding mountpoints-12.img (0 full blocks) total 1822
+mountpoints-12.img send start 1572332102:709891, end 1572332102:711763
+Reveiced PUT request for utsns-11.img:/tmp/dump/checkpoint1
+Serving PUT request for utsns-11.img:/tmp/dump/checkpoint1 (tid=140543049164544)
+Finished receiving pstree.img (0 full blocks, 101 bytes on last block)
+Finished receiving ipcns-var-10.img (0 full blocks, 82 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding ipcns-var-10.img (0 full blocks) total 84
+ipcns-var-10.img send start 1572332102:713157, end 1572332102:713881
+Finished receiving utsns-11.img (0 full blocks, 34 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding utsns-11.img (0 full blocks) total 36
+utsns-11.img send start 1572332102:714051, end 1572332102:714613
+......the acceleration is 7
+
+Finished forwarding pstree.img (0 full blocks) total 101
+pstree.img send start 1572332102:712583, end 1572332102:715039
+Reveiced PUT request for cgroup.img:/tmp/dump/checkpoint1
+Serving PUT request for cgroup.img:/tmp/dump/checkpoint1 (tid=140543040243456)
+Reveiced PUT request for inventory.img:/tmp/dump/checkpoint1
+Serving PUT request for inventory.img:/tmp/dump/checkpoint1 (tid=140543031322368)
+Reveiced PUT request for DUMP_FINISH:null
+Serving PUT request for DUMP_FINISH:null (tid=140543022401280)
+Received DUMP FINISH
+Finished receiving inventory.img (0 full blocks, 42 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding inventory.img (0 full blocks) total 44
+inventory.img send start 1572332102:822325, end 1572332102:822966
+Finished receiving reg-files.img (0 full blocks, 1891 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding reg-files.img (0 full blocks) total 1071
+reg-files.img send start 1572332102:823647, end 1572332102:824386
+Finished receiving pipes.img (0 full blocks, 173 bytes on last block)
+Finished receiving pipes-data.img (0 full blocks, 49 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding pipes-data.img (0 full blocks) total 43
+pipes-data.img send start 1572332102:828546, end 1572332102:828880
+......the acceleration is 7
+
+Finished forwarding pipes.img (0 full blocks) total 138
+pipes.img send start 1572332102:828512, end 1572332102:829695
+Finished receiving cgroup.img (0 full blocks, 5155 bytes on last block)
+......the acceleration is 7
+
+Finished forwarding cgroup.img (0 full blocks) total 1964
+cgroup.img send start 1572332102:838614, end 1572332102:839293
