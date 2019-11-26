@@ -57,13 +57,16 @@ extern int image_cache(unsigned short cache_port);
  * lseek, which is used to advance the file needle. */
 int skip_remote_bytes(int fd, unsigned long len);
 
-/* To support iterative migration (multiple pre-dumps before the final dump
+/* To support iterative migration (multiple pre-dumps before the final dump)
  * and subsequent restore, the concept of namespace is introduced. Each image
  * is tagged with one namespace and we build a hierarchy of namespaces to 
  * represent the dependency between pagemaps. Currently, the images dir is 
  * used as namespace when the operation is marked as remote. */
+/* 为了支持迭代迁移（在最终dump前进行多次pre-dump）和后续还原，引入了命名空间的概念。
+ * 每个镜像都标记有一个命名空间，并且建立了一个层次结构命名空间来表示页表间的依赖关系。
+ * 目前当操作被标记为远程时，镜像dir被用作名称空间 */
 
-/* Sets the current namesapce and parent namespace. */
+/* Sets the current namespace and parent namespace. */
 void init_namespace(char* namespace, char* parent);
 
 /* Returns an integer (virtual fd) representing the current namespace. */

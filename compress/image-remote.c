@@ -60,6 +60,7 @@ int setup_local_client_connection(int port)
         return sockfd;
 }
 
+/* 写远程镜像（namespace和path） */
 int write_header(int fd, char* namespace, char* path)
 {
         if (write(fd, path, PATHLEN) < 1) {
@@ -74,8 +75,9 @@ int write_header(int fd, char* namespace, char* path)
         return 0;
 }
 
+/* 读取远程镜像（namespace和path） */
 int read_header(int fd, char* namespace, char* path)
-{// 将namespace和path读到相应的变量中
+{
         int n = read(fd, path, PATHLEN);
         if (n < 0) {
                 perror("Error reading from remote image socket");
@@ -95,6 +97,7 @@ int read_header(int fd, char* namespace, char* path)
     return 0;
 }
 
+/* 由restore调用，获取对应于特定路径的fd，该调用将在收到连接时阻塞 */
 int get_remote_image_connection(char* namespace, char* path)
 {
         int sockfd;
@@ -131,6 +134,7 @@ int get_remote_image_connection(char* namespace, char* path)
         }
 }
 
+/* 由dump调用，创建到restore端的套接字连接，返回的套接字fd用于进一步的写操作 */
 int open_remote_image_connection(char* namespace, char* path)
 {
         int sockfd = setup_local_client_connection(PROXY_PUT_PORT);
@@ -146,6 +150,7 @@ int open_remote_image_connection(char* namespace, char* path)
         return sockfd;
 }
 
+/* 由dump在完成时调用，该函数使用特别控制名创建新的连接，恢复端使用它来ack不再有新的文件到来 */
 int finish_remote_dump()
 {
         printf("Dump side is calling finish\n");
@@ -158,6 +163,7 @@ int finish_remote_dump()
         return 0;
 }
 
+/* 从fd读取（丢弃）len字节，用于模拟函数lseek-用于推进文件指针 */
 int skip_remote_bytes(int fd, unsigned long len)
 {
     static char buf[4096];
@@ -236,6 +242,7 @@ static int fetch_namespaces() {
         return parents_occ;
 }
 
+/* 将当前命名空间推送到命名空间层次结构中，该层次结构可被读、修改、写 */
 int push_namespace()
 {
     if(fetch_namespaces() < 0) {
@@ -250,12 +257,14 @@ int push_namespace()
     return parents_occ;
 }
 
+/* 设置当前命名空间和父命名空间 */
 void init_namespace(char* ns, char* p)
 {
         namespace = ns;
         parent = p;
 }
 
+/* 返回一个整数（虚拟fd），它代表当前命名空间的整数 */
 int get_current_namespace_fd()
 {
         int i = 0;
@@ -274,11 +283,13 @@ int get_current_namespace_fd()
         return -1;
 }
 
+/* 返回一个指针，它指向包括当前命名空间的char数组 */
 char* get_current_namespace()
 {
         return namespace;
 }
 
+/* 返回一个与虚拟fd（作为参数）相关联的命名空间 */
 char* get_namespace(int dfd)
 {
         if(parents_occ == 0) {

@@ -73,9 +73,8 @@ void* proxy_remote_image(void* ptr)
         return NULL;
 }
 
-// fwd_host : forward host 发送主机
-// fwd_host 对应 cache_host
-// fwd_port 对应 cache_port
+/* 启动image_proxy守护进程（dump端），它通过套接字获取镜像文件并传送到image_cache（restore端） */
+/* fwd_host: 目标端IP ； fwd_port：发送端口 */
 int image_proxy(char* fwd_host, unsigned short fwd_port)
 {
         pthread_t get_thr, put_thr;
