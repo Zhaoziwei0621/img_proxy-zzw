@@ -22,9 +22,10 @@
 //#include "protobuf/pagemap.pb-c.h"
 //#include "image-desc.h"
 
-static char* dst_host;
+static char* dst_host; //目的主机IP
 static unsigned short dst_port = CACHE_PUT_PORT;
 
+/* 通过套接字向目的端发送镜像文件 */
 void* proxy_remote_image(void* ptr)
 {
         remote_image* rimg = (remote_image*) ptr;
@@ -45,30 +46,31 @@ void* proxy_remote_image(void* ptr)
         // 准备传输镜像，putting++
         prepare_put_rimg();
 
-        if (!strncmp(rimg->path, DUMP_FINISH, sizeof(DUMP_FINISH)))
+        // 判断Dump是否结束
+        if(!strncmp(rimg->path, DUMP_FINISH, sizeof(DUMP_FINISH)))
         {
             close(rimg->dst_fd);
             finalize_put_rimg(rimg);
             return NULL;
 	}
 
-        // 得到镜像数据
-        if (recv_remote_image(rimg->src_fd, rimg->path, &(rimg->buf_head)) < 0) {
+        // 从源端socket实际获取镜像数据
+        if(recv_remote_image(rimg->src_fd, rimg->path, &(rimg->buf_head)) < 0) {
                 return NULL;
         }
         finalize_put_rimg(rimg);
         // 计时
         struct timeval start, end;
-        gettimeofday(&start, NULL);
-       	//if (!strncmp(rimg->path, "pages-", 6))
-        //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
-		//else
+        gettimeofday(&start, NULL); // 获取当前时间
+       	/*if (!strncmp(rimg->path, "pages-", 6))
+        /*	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
+		else */
 
         // lz4压缩
         send_remote_image_lz4(rimg->dst_fd, rimg->path, &(rimg->buf_head));
-		// else
-        //	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head));
-        gettimeofday(&end, NULL);
+		/* else
+        /*	send_remote_image(rimg->dst_fd, rimg->path, &(rimg->buf_head)); */
+        gettimeofday(&end, NULL); //获取结束时间
         printf("%s send start %ld:%ld, end %ld:%ld\n", rimg->path, start.tv_sec, start.tv_usec, end.tv_sec, end.tv_usec);
         return NULL;
 }

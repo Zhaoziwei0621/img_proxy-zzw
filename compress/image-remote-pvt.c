@@ -32,7 +32,7 @@ static int putting = 0;
 static void* (*get_func)(void*);
 static void* (*put_func)(void*);
 
-/* 根据path和namespace获取镜像数据 */
+/* 确认path和namespace是否为空 */
 static remote_image* get_rimg_by_name(const char* namespace, const char* path)
 {
         remote_image* rimg = NULL;
@@ -74,7 +74,6 @@ int init_sync_structures()
 }
 
 /* 通过套接字从CRIU获取镜像文件 */
-/* fd 是通信套接字 */
 void* get_remote_image(void* fd)
 {
         int cli_fd = (long) fd;
@@ -150,9 +149,9 @@ int prepare_server_socket(int port)
                 return -1;
         }
 
-        bzero((char *) &serv_addr, sizeof (serv_addr)); //每个字节用0填充
+        bzero((char *) &serv_addr, sizeof (serv_addr)); // 每个字节用0填充
         serv_addr.sin_family = AF_INET;
-        serv_addr.sin_addr.s_addr = INADDR_ANY; //监听本地任意IP（多网卡）
+        serv_addr.sin_addr.s_addr = INADDR_ANY; // 监听本地任意IP（多网卡）
         serv_addr.sin_port = htons(port);
 
         // 设置套接字的选项值，这里是打开地址和端口复用
@@ -184,25 +183,28 @@ int prepare_client_socket(char* hostname, int port)
         struct hostent *server;
         struct sockaddr_in serv_addr;
 
+        // 建立socket
         int sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) {
                 perror("Unable to open recover image socket");
                 return -1;
         }
 
+        // 获取主机hostent信息
         server = gethostbyname(hostname);
         if (server == NULL) {
                 printf("Unable to get host by name (%s)", hostname);
                 return -1;
         }
 
-        bzero((char *) &serv_addr, sizeof (serv_addr));
+        bzero((char *) &serv_addr, sizeof (serv_addr));  // 每个字节用0填充
         serv_addr.sin_family = AF_INET;
-        bcopy((char *) server->h_addr,
+        bcopy((char *) server->h_addr, // 根据hostent获取目的端主机IP
               (char *) &serv_addr.sin_addr.s_addr,
               server->h_length);
         serv_addr.sin_port = htons(port);
 
+        // 连接服务器socket
         if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
                 printf("Unable to connect to remote restore host %s", hostname);
                 return -1;
@@ -251,7 +253,7 @@ remote_image* wait_for_image(int cli_fd, char* namespace, char* path)
         remote_image *result;
 
         while (1) {
-                // 通过namespace和path查找到相应镜像文件
+                // 确认namespace和path是否为空
                 result = get_rimg_by_name(namespace, path);
                 // The file exists
                 if(result != NULL) {
@@ -406,10 +408,9 @@ int recv_remote_image(int fd, char* path, struct list_head* rbuff_head)
         nblocks = 0;
         while(1) {
                 // 调用read函数实际从socket中读取数据
-                n = read(fd,
-                curr_buf->buffer + curr_buf->nbytes,
-                BUF_SIZE - curr_buf->nbytes);
-                if (n == 0) { // 如果没有读到数据
+                n = read(fd, curr_buf->buffer + curr_buf->nbytes, BUF_SIZE - curr_buf->nbytes);
+                // 如果没有读到数据
+                if (n == 0) {
                         printf("Finished receiving %s (%d full blocks, %d bytes on last block)\n",
                                 path, nblocks, curr_buf->nbytes);
                         // 如果buffer里面没有数据，那么前一个buf中is_end置true
@@ -422,8 +423,10 @@ int recv_remote_image(int fd, char* path, struct list_head* rbuff_head)
                         close(fd);
                         return nblocks*BUF_SIZE + curr_buf->nbytes;
                 }
+                // 如果读到数据
                 else if (n > 0) {
                         curr_buf->nbytes += n;
+                        // 如果当前缓存区读满，则为下一次读取分配存储空间
                         if(curr_buf->nbytes == BUF_SIZE) {
                                 remote_buffer* buf = malloc(sizeof(remote_buffer));
                                 if(buf == NULL) {
@@ -432,8 +435,8 @@ int recv_remote_image(int fd, char* path, struct list_head* rbuff_head)
                                 }
                                 buf->nbytes = 0;
                                 buf->is_end = 0;
-                                list_add_tail(&(buf->l), rbuff_head);
-                                curr_buf = buf;
+                                list_add_tail(&(buf->l), rbuff_head); //插入双向链表的尾部
+                                curr_buf = buf; //分配存储空间，准备下一次读取镜像数据
                                 nblocks++;
                         }
                 }
@@ -474,21 +477,20 @@ int send_remote_image(int fd, char* path, struct list_head* rbuff_head)
         // 循环发送镜像数据
         while(1) {
                 // msg head
-                struct msgInfo msg; //？msg里记录的是数据的元数据
+                struct msgInfo msg; // ？msg里记录的是数据的元数据
                 msg.nbytes = curr_buf->nbytes;
                 msg.cbytes = 0;
                 msg.is_compressed = false;
                 msg.is_end = curr_buf->is_end; // means msg will end
 
-                char* buf = malloc(sizeof(msgInfo));
+                char* buf = malloc(sizeof(msgInfo)); //msg_buff
                 memcpy(buf, &msg, sizeof(msgInfo));
-                //fd是通信套接字
+                // fd是通信套接字
                 // ？先发送元数据，再发送数据
                 if (send_remote_obj(fd, buf, sizeof(msgInfo)) != sizeof(msgInfo)) {
                         printf("Write on %s msgInfo failed\n", path);
                         return -1;
                 }
-
                 if (send_remote_obj(fd, curr_buf->buffer, msg.nbytes) == msg.nbytes) {
                         if (msg.is_end) {
                                 printf("Finished forwarding %s (%d full blocks, %d bytes on last block) total %d\n",

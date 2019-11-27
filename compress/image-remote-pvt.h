@@ -32,7 +32,7 @@ typedef struct rimg {
     int src_fd;
     int dst_fd;
     struct list_head l; // 双向链表结构体
-    struct list_head buf_head;
+    struct list_head buf_head; //存放镜像数据
 } remote_image;
 
 typedef struct msgInfo {

@@ -75,7 +75,7 @@ int write_header(int fd, char* namespace, char* path)
         return 0;
 }
 
-/* 读取远程镜像（namespace和path） */
+/* 读取远程镜像对应的namespace和path */
 int read_header(int fd, char* namespace, char* path)
 {
         int n = read(fd, path, PATHLEN);
