@@ -32,7 +32,7 @@ static int putting = 0;
 static void* (*get_func)(void*);
 static void* (*put_func)(void*);
 
-/* 确认path和namespace是否为空 */
+/* 检查确认path和namespace是否为空 */
 static remote_image* get_rimg_by_name(const char* namespace, const char* path)
 {
         remote_image* rimg = NULL;
@@ -289,59 +289,58 @@ remote_image* wait_for_image(int cli_fd, char* namespace, char* path)
         }
 }
 
+/* 开始实际调用镜像接收函数 */
 void* accept_get_image_connections(void* port)
 {
         socklen_t clilen;
         long cli_fd;
-        pthread_t tid;
-        int get_fd = *((int*) port);
+        pthread_t tid; // 线程ID
+        int get_fd = *((int*) port); // 参数类型转换，重新转换为整数类型
         struct sockaddr_in cli_addr;
         clilen = sizeof (cli_addr);
 
         while (1) {
-
+                // 接收CRIU“客户端”的请求 
                 cli_fd = accept(get_fd, (struct sockaddr *) &cli_addr, &clilen);
                 if (cli_fd < 0) {
 			perror("Unable to accept get image connection");
                         return NULL;
                 }
-
-                if (pthread_create(
+                if (pthread_create( // 创建线程，调用get_func()
                     &tid, NULL, get_func, (void*) cli_fd)) {
                         perror("Unable to create put thread");
                         return NULL;
                 }
-
                 add_worker(tid);
         }
 }
 
+/* 开始实际调用镜像发送函数 */
 void* accept_put_image_connections(void* port)
 {
         socklen_t clilen;
         int cli_fd;
-        pthread_t tid;
-        int put_fd = *((int*) port);
+        pthread_t tid; // 线程ID
+        int put_fd = *((int*) port); // 参数类型转换，重新转换为整数类型
         struct sockaddr_in cli_addr;
         clilen = sizeof(cli_addr);
         char path_buf[PATHLEN];
         char namespace_buf[PATHLEN];
 
         while (1) {
-
+                // 接受restore目的端的请求
                 cli_fd = accept(put_fd, (struct sockaddr *) &cli_addr, &clilen);
                 if (cli_fd < 0) {
                         perror("Unable to accept put image connection");
                         return NULL;
                 }
-
+                
+                // 从套接字读取namespace和path
                 if(read_header(cli_fd, namespace_buf, path_buf) < 0) {
-                    perror("Error reading header");
-                    continue;
+                        perror("Error reading header");
+                        continue;
                 }
-
-                remote_image* rimg = get_rimg_by_name(namespace_buf, path_buf);
-
+                remote_image* rimg = get_rimg_by_name(namespace_buf, path_buf); // 检查namespace和path
                 printf("Reveiced PUT request for %s:%s\n", path_buf, namespace_buf);
                 
                 //给rimg结构体赋空间
@@ -366,7 +365,7 @@ void* accept_put_image_connections(void* port)
                 }
                 // NOTE: we implement a PUT by clearing the previous file.
                 else {
-                    printf("Clearing previous images for %s:%s\n",
+                        printf("Clearing previous images for %s:%s\n",
                             path_buf, namespace_buf);
                         pthread_mutex_lock(&rimg_lock);
                         list_del(&(rimg->l));

@@ -79,7 +79,7 @@ void* proxy_remote_image(void* ptr)
 /* fwd_host: 目标端IP ； fwd_port：发送端口 */
 int image_proxy(char* fwd_host, unsigned short fwd_port)
 {
-        pthread_t get_thr, put_thr;
+        pthread_t get_thr, put_thr; //线程ID
         int put_fd, get_fd;
 
         dst_host = fwd_host;
@@ -108,6 +108,7 @@ int image_proxy(char* fwd_host, unsigned short fwd_port)
 
         join_workers();
 
+        // 主线程等待子线程终止
         // NOTE: these joins will never return...
         pthread_join(put_thr, NULL);
         pthread_join(get_thr, NULL);
