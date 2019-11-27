@@ -152,9 +152,10 @@ int prepare_server_socket(int port)
 
         bzero((char *) &serv_addr, sizeof (serv_addr)); //每个字节用0填充
         serv_addr.sin_family = AF_INET;
-        serv_addr.sin_addr.s_addr = INADDR_ANY;
+        serv_addr.sin_addr.s_addr = INADDR_ANY; //监听本地任意IP（多网卡）
         serv_addr.sin_port = htons(port);
 
+        // 设置套接字的选项值，这里是打开地址和端口复用
         // SOL_SOCKET：套接字层次；SO_REUSERADDR：允许重用本地地址和端口
         if (setsockopt(
             sockfd, SOL_SOCKET, SO_REUSEADDR, &sockopt, sizeof (sockopt)) == -1) {
@@ -162,13 +163,13 @@ int prepare_server_socket(int port)
                 return -1;
         }
 
-        // 绑定
+        // 将套接字和IP、端口绑定
         if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
                 perror("Unable to bind image socket");
                 return -1;
         }
 
-        // 监听
+        // 监听，等待用户发起请求
         if (listen(sockfd, DEFAULT_LISTEN)) {
                 perror("Unable to listen image socket");
                 return -1;
@@ -244,7 +245,7 @@ void join_workers()
         }
 }
 
-/* cli_fd是通信套接字 */
+/* 等待镜像 */
 remote_image* wait_for_image(int cli_fd, char* namespace, char* path)
 {
         remote_image *result;
@@ -443,7 +444,7 @@ int recv_remote_image(int fd, char* path, struct list_head* rbuff_head)
         }
 }
 
-/* fd是通信套接字 */
+/* 发送实际数据 */
 size_t send_remote_obj(int fd, char* buff, size_t size) 
 {
 	size_t n = 0;
@@ -454,17 +455,15 @@ size_t send_remote_obj(int fd, char* buff, size_t size)
 		n = send(fd, buff + curr, size - curr, MSG_NOSIGNAL);
 		if( n < 1) {
 			return n;
-		}
-		
-		curr += n;
-		
+		}		
+		curr += n;		
 		if(curr == size) {
 			return size;
 		}
 	}
 }
 
-/* 返回发送的数据量 */
+/* 发送镜像数据，返回发送的数据量，调用send_remote_obj() */
 int send_remote_image(int fd, char* path, struct list_head* rbuff_head)
 {
         remote_buffer* curr_buf = list_entry(rbuff_head->next, remote_buffer, l);
@@ -479,8 +478,7 @@ int send_remote_image(int fd, char* path, struct list_head* rbuff_head)
                 msg.nbytes = curr_buf->nbytes;
                 msg.cbytes = 0;
                 msg.is_compressed = false;
-                // means msg will end
-                msg.is_end = curr_buf->is_end;
+                msg.is_end = curr_buf->is_end; // means msg will end
 
                 char* buf = malloc(sizeof(msgInfo));
                 memcpy(buf, &msg, sizeof(msgInfo));
@@ -498,7 +496,7 @@ int send_remote_image(int fd, char* path, struct list_head* rbuff_head)
                                 close(fd);
                                 return nblocks*BUF_SIZE + curr_buf->nbytes;
                         }
-                nblocks++;
+                        nblocks++;
                 //if (!strncmp(path, "pages-", 6))
                 //		printf("we forwarding %s (%d full blocks, %d bytes on last block) total %d\n",
                 //				path, nblocks, curr_buf->nbytes, nblocks*BUF_SIZE);
@@ -510,6 +508,8 @@ int send_remote_image(int fd, char* path, struct list_head* rbuff_head)
         }
 }
 
+
+/* 发送压缩后的镜像数据，返回发送的数据量，调用send_remote_obj() */
 int send_remote_image_lz4(int fd, char* path, struct list_head* rbuff_head)
 {
         remote_buffer* curr_buf = list_entry(rbuff_head->next, remote_buffer, l);
