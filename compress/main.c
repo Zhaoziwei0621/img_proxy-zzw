@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
 	printf("Client ip=%s , port=%d\n", argv[1], atoi(argv[2]));
 
-	if (image_proxy(argv[1], atoi(argv[2]))) { //调用代理函数，IP + 端口号
+	if (image_proxy(argv[1], atoi(argv[2]))) { //调用代理函数，传入参数目的端IP + 端口号
 		printf("Send image failed\n");
 		return -1;
 	}

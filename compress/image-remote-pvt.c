@@ -32,7 +32,7 @@ static int putting = 0;
 static void* (*get_func)(void*);
 static void* (*put_func)(void*);
 
-// 根据path和namespace获取镜像数据
+/* 根据path和namespace获取镜像数据 */
 static remote_image* get_rimg_by_name(const char* namespace, const char* path)
 {
         remote_image* rimg = NULL;
@@ -48,7 +48,7 @@ static remote_image* get_rimg_by_name(const char* namespace, const char* path)
         return NULL;
 }
 
-// 初始化线程锁和信号量
+/* 初始化线程锁和信号量 */
 int init_sync_structures()
 {
         if (pthread_mutex_init(&rimg_lock, NULL) != 0) { //线程互斥锁的初始化
@@ -73,8 +73,8 @@ int init_sync_structures()
         return 0;
 }
 
-// 通过套接字从CRIU获取镜像文件
-// fd 是通信套接字
+/* 通过套接字从CRIU获取镜像文件 */
+/* fd 是通信套接字 */
 void* get_remote_image(void* fd)
 {
         int cli_fd = (long) fd;
@@ -101,6 +101,7 @@ void* get_remote_image(void* fd)
         return NULL;
 }
 
+/* 准备发送镜像 */
 void prepare_put_rimg()
 {
         pthread_mutex_lock(&rimg_lock);
@@ -108,6 +109,7 @@ void prepare_put_rimg()
         pthread_mutex_unlock(&rimg_lock);
 }
 
+/* 开始发送镜像 */
 void finalize_put_rimg(remote_image* rimg)
 {
         pthread_mutex_lock(&rimg_lock);
@@ -117,6 +119,7 @@ void finalize_put_rimg(remote_image* rimg)
         sem_post(&rimg_semph);
 }
 
+/* 初始化代理模块的函数指针：获取镜像、发送镜像 */
 int init_proxy()
 {
         get_func = get_remote_image; //函数指针
@@ -133,7 +136,7 @@ int init_cache()
 }
 */
 
-// 准备服务端socket连接
+/* 准备服务端socket连接 */
 int prepare_server_socket(int port)
 {
         struct sockaddr_in serv_addr;
@@ -174,7 +177,7 @@ int prepare_server_socket(int port)
         return sockfd;
 }
 
-// 准备客户端socket连接
+/* 准备客户端socket连接 */
 int prepare_client_socket(char* hostname, int port)
 {
         struct hostent *server;
@@ -241,7 +244,7 @@ void join_workers()
         }
 }
 
-// cli_fd是通信套接字
+/* cli_fd是通信套接字 */
 remote_image* wait_for_image(int cli_fd, char* namespace, char* path)
 {
         remote_image *result;
@@ -392,7 +395,7 @@ void* accept_put_image_connections(void* port)
         }
 }
 
-// 实际获取镜像数据
+/* 实际获取镜像数据 */
 int recv_remote_image(int fd, char* path, struct list_head* rbuff_head)
 {
         // 找到了rbuff_head->next所在的remote_buffer结构体的地址
@@ -440,7 +443,7 @@ int recv_remote_image(int fd, char* path, struct list_head* rbuff_head)
         }
 }
 
-// fd是通信套接字
+/* fd是通信套接字 */
 size_t send_remote_obj(int fd, char* buff, size_t size) 
 {
 	size_t n = 0;
@@ -461,7 +464,7 @@ size_t send_remote_obj(int fd, char* buff, size_t size)
 	}
 }
 
-// 返回发送的数据量
+/* 返回发送的数据量 */
 int send_remote_image(int fd, char* path, struct list_head* rbuff_head)
 {
         remote_buffer* curr_buf = list_entry(rbuff_head->next, remote_buffer, l);
