@@ -108,7 +108,7 @@ int image_proxy(char* fwd_host, unsigned short fwd_port)
 
         join_workers();
 
-        // 主线程等待子线程终止
+        // 主线程等待put_thr、get_thr子线程终止
         // NOTE: these joins will never return...
         pthread_join(put_thr, NULL);
         pthread_join(get_thr, NULL);

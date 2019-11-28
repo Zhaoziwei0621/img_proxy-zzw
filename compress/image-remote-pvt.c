@@ -18,13 +18,13 @@ typedef struct wthread {
     struct list_head l;
 } worker_thread;
 
-static LIST_HEAD(rimg_head); // 生成双向循环列表结构的空的头结点
+static LIST_HEAD(rimg_head);      // 生成双向循环列表结构的空的头结点
 static pthread_mutex_t rimg_lock; // 线程互斥锁
-static sem_t rimg_semph; // 信号量
+static sem_t rimg_semph;          // 信号量
 
-static LIST_HEAD(workers_head);
-static pthread_mutex_t workers_lock;
-static sem_t workers_semph;
+static LIST_HEAD(workers_head);      // 生成双向循环列表结构的空的头结点
+static pthread_mutex_t workers_lock; // 线程互斥锁
+static sem_t workers_semph;          // 信号量
 
 static int finished = 0;
 static int putting = 0;
@@ -86,7 +86,6 @@ void* get_remote_image(void* fd)
                 perror("Error reading header");
                 return NULL;
         }
-
         printf("Received GET for %s:%s.\n", path_buf, namespace_buf);
 
         // 等待镜像的到来
@@ -213,17 +212,21 @@ int prepare_client_socket(char* hostname, int port)
         return sockfd;
 }
 
+/* 使用worker_thread保存当前线程ID，插入双向循环链表 */
 static void add_worker(pthread_t tid)
 {
+        // worker_thread是自己定义的保存线程ID的数据结构
         worker_thread* wthread = malloc(sizeof(worker_thread));
         if(!wthread) {
                 perror("Unable to allocate worker thread structure");
         }
         wthread->tid = tid;
+        
+        //开启互斥锁，将线程ID数据节点插入双向循环链表的尾节点
         pthread_mutex_lock(&workers_lock);
-        list_add_tail(&(wthread->l), &workers_head);
-        pthread_mutex_unlock(&workers_lock);
-        sem_post(&workers_semph);
+        list_add_tail(&(wthread->l), &workers_head); 
+        pthread_mutex_unlock(&workers_lock);  
+        sem_post(&workers_semph); // 增加信号量的值
 }
 
 void join_workers()
@@ -285,7 +288,7 @@ remote_image* wait_for_image(int cli_fd, char* namespace, char* path)
                     close(cli_fd);
                     return NULL;
                 }
-                sem_wait(&rimg_semph);
+                sem_wait(&rimg_semph); //阻塞当前线程直到信号量rimg_semph大于0
         }
 }
 
@@ -294,24 +297,24 @@ void* accept_get_image_connections(void* port)
 {
         socklen_t clilen;
         long cli_fd;
-        pthread_t tid; // 线程ID
-        int get_fd = *((int*) port); // 参数类型转换，重新转换为整数类型
         struct sockaddr_in cli_addr;
         clilen = sizeof (cli_addr);
+        pthread_t tid; // 线程ID
+        int get_fd = *((int*) port); // 获取套接字描述符，参数类型转换-重新转换为整数类型
 
         while (1) {
-                // 接收CRIU“客户端”的请求 
+                // 接收CRIU“客户端”的请求，获取客户端套接字fd
                 cli_fd = accept(get_fd, (struct sockaddr *) &cli_addr, &clilen);
-                if (cli_fd < 0) {
+                if(cli_fd < 0) {
 			perror("Unable to accept get image connection");
                         return NULL;
                 }
-                if (pthread_create( // 创建线程，调用get_func()
-                    &tid, NULL, get_func, (void*) cli_fd)) {
+                // 创建线程，调用get_func()
+                if(pthread_create(&tid, NULL, get_func, (void*) cli_fd)) {
                         perror("Unable to create put thread");
                         return NULL;
                 }
-                add_worker(tid);
+                add_worker(tid); // 保存当前线程，并增加workers_semph信号量的值
         }
 }
 
