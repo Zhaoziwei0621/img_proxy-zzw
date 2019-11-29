@@ -106,6 +106,7 @@ int image_proxy(char* fwd_host, unsigned short fwd_port)
                 return -1;
         }
 
+        // 等待worker_thread结束
         join_workers();
 
         // 主线程等待put_thr、get_thr子线程终止

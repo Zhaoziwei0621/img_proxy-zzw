@@ -32,7 +32,7 @@ static int putting = 0;
 static void* (*get_func)(void*);
 static void* (*put_func)(void*);
 
-/* 检查确认path和namespace是否为空 */
+/* 检查确认path和namespace是否为空，为空则返回空的rimg，否者返回NULL */
 static remote_image* get_rimg_by_name(const char* namespace, const char* path)
 {
         remote_image* rimg = NULL;
@@ -125,14 +125,12 @@ int init_proxy()
         return init_sync_structures();
 }
 
-/*
-int init_cache()
+/*int init_cache()
 {
         get_func = get_remote_image;
         put_func = cache_remote_image;
         return init_sync_structures();
-}
-*/
+}*/
 
 /* 准备服务端socket连接 */
 int prepare_server_socket(int port)
@@ -140,8 +138,7 @@ int prepare_server_socket(int port)
         struct sockaddr_in serv_addr;
         int sockopt = 1;
 
-        // 函数原型：int socket(int domain, int type, int protocol)
-        // domain指定协议域，type选择socket类型，protocol指定协议（为0自动对应type的默认协议）
+        // 创建套接字
         int sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) {
                 perror("Unable to open image socket");
@@ -153,8 +150,7 @@ int prepare_server_socket(int port)
         serv_addr.sin_addr.s_addr = INADDR_ANY; // 监听本地任意IP（多网卡）
         serv_addr.sin_port = htons(port);
 
-        // 设置套接字的选项值，这里是打开地址和端口复用
-        // SOL_SOCKET：套接字层次；SO_REUSERADDR：允许重用本地地址和端口
+        // 设置套接字的选项值，SO_REUSERADDR：允许重用本地地址和端口
         if (setsockopt(
             sockfd, SOL_SOCKET, SO_REUSEADDR, &sockopt, sizeof (sockopt)) == -1) {
                 perror("Unable to set SO_REUSEADDR");
@@ -229,12 +225,13 @@ static void add_worker(pthread_t tid)
         sem_post(&workers_semph); // 增加信号量的值
 }
 
+/* 等待worker_thread结束 */
 void join_workers()
 {
         worker_thread* wthread = NULL;
         while(1) {
             if(list_empty(&workers_head)) {
-                    sem_wait(&workers_semph);
+                    sem_wait(&workers_semph); //阻塞，等待信号量为正
                     continue;
             }
             wthread = list_entry(workers_head.next, worker_thread, l);
@@ -323,10 +320,11 @@ void* accept_put_image_connections(void* port)
 {
         socklen_t clilen;
         int cli_fd;
-        pthread_t tid; // 线程ID
-        int put_fd = *((int*) port); // 参数类型转换，重新转换为整数类型
         struct sockaddr_in cli_addr;
         clilen = sizeof(cli_addr);
+        
+        pthread_t tid; // 线程ID
+        int put_fd = *((int*) port); // 参数类型转换，重新转换为整数类型
         char path_buf[PATHLEN];
         char namespace_buf[PATHLEN];
 
@@ -338,7 +336,7 @@ void* accept_put_image_connections(void* port)
                         return NULL;
                 }
                 
-                // 从套接字读取namespace和path
+                // 从套接字读取namespace、path 到namespace_buf、path_buf中
                 if(read_header(cli_fd, namespace_buf, path_buf) < 0) {
                         perror("Error reading header");
                         continue;
@@ -346,20 +344,19 @@ void* accept_put_image_connections(void* port)
                 remote_image* rimg = get_rimg_by_name(namespace_buf, path_buf); // 检查namespace和path
                 printf("Reveiced PUT request for %s:%s\n", path_buf, namespace_buf);
                 
-                //给rimg结构体赋空间
+                // 当rimg为空，将namespace_buf、path_buf数据存放到rimg中
                 if(rimg == NULL) {
                         rimg = malloc(sizeof (remote_image));
                         if (rimg == NULL) {
                                 perror("Unable to allocate remote_image structures");
                                 return NULL;
                         }
-
                         remote_buffer* buf = malloc(sizeof (remote_buffer));
                         if(buf == NULL) {
                                 perror("Unable to allocate remote_buffer structures");
                                 return NULL;
                         }
-
+                        
                         strncpy(rimg->path, path_buf, PATHLEN);
                         strncpy(rimg->namespace, namespace_buf, PATHLEN);
                         buf->nbytes = 0;
@@ -368,8 +365,7 @@ void* accept_put_image_connections(void* port)
                 }
                 // NOTE: we implement a PUT by clearing the previous file.
                 else {
-                        printf("Clearing previous images for %s:%s\n",
-                            path_buf, namespace_buf);
+                        printf("Clearing previous images for %s:%s\n", path_buf, namespace_buf);
                         pthread_mutex_lock(&rimg_lock);
                         list_del(&(rimg->l));
                         pthread_mutex_unlock(&rimg_lock);
@@ -381,16 +377,14 @@ void* accept_put_image_connections(void* port)
                 rimg->src_fd = cli_fd;
                 rimg->dst_fd = -1;
 
-                if (pthread_create(
-                    &tid, NULL, put_func, (void*) rimg)) {
+                // 创建线程，调用put_func()
+                if (pthread_create(&tid, NULL, put_func, (void*) rimg)) {
                         perror("Unable to create put thread");
                         return NULL;
                 }
-
                 printf("Serving PUT request for %s:%s (tid=%lu)\n",
                         rimg->path, rimg->namespace, (unsigned long) tid);
-
-                add_worker(tid);
+                add_worker(tid); // 保存当前线程，并增加workers_semph信号量的值
 
                 if (!strncmp(path_buf, DUMP_FINISH, sizeof (DUMP_FINISH))) {
                         finished = 1;
