@@ -517,26 +517,26 @@ int send_remote_image_lz4(int fd, char* path, struct list_head* rbuff_head)
         bytes = 0;
 		
         while(1) {
-                // msg head
+                // 元数据初始化
                 struct msgInfo msg;
                 msg.nbytes = curr_buf->nbytes;
                 msg.cbytes = 0;
-                msg.is_compressed = false;
-                // means msg will end
+                msg.is_compressed = false; // means msg will end
                 msg.is_end = curr_buf->is_end;
 
-                int max_possible_lz4_bytes = LZ4_compressBound(curr_buf->nbytes);
-                char* lz4_buf = (char *)malloc(max_possible_lz4_bytes * sizeof(char));
-                msg.cbytes = LZ4_compress_fast(curr_buf->buffer, lz4_buf, curr_buf->nbytes, max_possible_lz4_bytes, 3);
+                int max_possible_lz4_bytes = LZ4_compressBound(curr_buf->nbytes); // 提供在“最坏情况”下LZ4压缩可以输出的最大大小
+                char* lz4_buf = (char *)malloc(max_possible_lz4_bytes * sizeof(char)); // 存放镜像数据
+                msg.cbytes = LZ4_compress_fast(curr_buf->buffer, lz4_buf, curr_buf->nbytes, max_possible_lz4_bytes, 3); // 允许选择加速值的Lz4压缩
                 msg.is_compressed = true;
                 
-                char* buf = malloc(sizeof(msgInfo));
+                char* buf = malloc(sizeof(msgInfo)); // 存放元数据
                 memcpy(buf, &msg, sizeof(msgInfo));
+                // 发送元数据
                 if (send_remote_obj(fd, buf, sizeof(msgInfo)) != sizeof(msgInfo)) {
                         printf("Write on %s msgInfo failed\n", path);
                         return -1;
                 }
-
+                // 发送镜像数据
                 if (send_remote_obj(fd, lz4_buf, msg.cbytes) == msg.cbytes) {
                         bytes += msg.cbytes;
                         if (msg.is_end) {
@@ -545,7 +545,7 @@ int send_remote_image_lz4(int fd, char* path, struct list_head* rbuff_head)
                         close(fd);
                         return bytes;
                 }
-                        nblocks++;
+                nblocks++;
                 } else {
                         printf("Write on %s msgData failed\n", path);
                         return -1;
